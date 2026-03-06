@@ -3,49 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlazeFace 测试</title>
+    <title>AI 智能瞳距测量 - 3秒测出你的瞳距</title>
     <style>
-        body {
+        * {
             margin: 0;
-            padding: 20px;
-            background: #1a1a2e;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             color: #fff;
-            font-family: Arial, sans-serif;
         }
         .container {
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 欢迎页 */
+        #welcomeScreen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .logo {
+            font-size: 64px;
+            margin-bottom: 20px;
         }
         h1 {
-            color: #2ecc71;
-            text-align: center;
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 600;
         }
-        .instructions {
-            background: #16213e;
-            padding: 20px;
-            border-radius: 8px;
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 50px;
+        }
+        .features {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
             margin: 20px 0;
-            border-left: 4px solid #2ecc71;
+            font-size: 16px;
         }
-        .instructions h3 {
-            margin-top: 0;
+        .feature-icon {
+            font-size: 28px;
+            margin-right: 15px;
+            min-width: 35px;
+        }
+        .btn-start {
+            background: #fff;
+            color: #667eea;
+            padding: 18px 60px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+
+        /* 测量页 */
+        #measureScreen {
+            display: none;
+        }
+        .step-title {
+            text-align: center;
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .tips-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .tips-box h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .tips-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .tips-box li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .tips-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
             color: #2ecc71;
+            font-weight: bold;
         }
-        .instructions ol {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        .instructions li {
-            margin: 8px 0;
-            line-height: 1.6;
-        }
-        .video-container {
+        .video-box {
             position: relative;
             background: #000;
-            border: 3px solid #0f3460;
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
             margin: 20px 0;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         #video {
             width: 100%;
@@ -59,138 +144,200 @@
             height: 100%;
             pointer-events: none;
         }
-        .controls {
+        .btn-group {
             text-align: center;
             margin: 20px 0;
         }
         button {
-            padding: 15px 30px;
-            font-size: 18px;
-            background: #0f3460;
+            background: rgba(255,255,255,0.2);
             color: #fff;
-            border: none;
-            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            padding: 15px 35px;
+            font-size: 16px;
+            border-radius: 50px;
             cursor: pointer;
-            font-weight: bold;
-            margin: 10px;
+            margin: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
         }
-        button:hover {
-            background: #16213e;
+        button:hover:not(:disabled) {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
         }
         button:disabled {
-            background: #555;
+            opacity: 0.5;
             cursor: not-allowed;
         }
         button.primary {
             background: #2ecc71;
+            border-color: #2ecc71;
         }
-        button.primary:hover {
+        button.primary:hover:not(:disabled) {
             background: #27ae60;
+            border-color: #27ae60;
         }
-        #log {
-            background: #16213e;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            margin-top: 20px;
-        }
-        .result {
-            background: #2ecc71;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        .result.warning {
-            background: #f39c12;
-        }
-        .result h2 {
-            margin: 0 0 10px 0;
-        }
-        .result .pd-value {
-            font-size: 48px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-        .result .confidence {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-        .result .samples {
-            font-size: 12px;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-        .progress {
-            background: #16213e;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            text-align: center;
+
+        /* 进度条 */
+        .progress-box {
             display: none;
+            text-align: center;
+            padding: 20px;
         }
         .progress-bar {
             width: 100%;
-            height: 30px;
-            background: #0f3460;
-            border-radius: 15px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
             overflow: hidden;
-            margin: 10px 0;
+            margin: 15px 0;
         }
         .progress-fill {
             height: 100%;
             background: #2ecc71;
             transition: width 0.3s;
         }
+
+        /* 结果页 */
+        .result-box {
+            display: none;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .result-box.success {
+            border: 3px solid #2ecc71;
+        }
+        .result-box.warning {
+            border: 3px solid #f39c12;
+        }
+        .result-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .pd-value {
+            font-size: 56px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #2ecc71;
+        }
+        .result-message {
+            font-size: 18px;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+        .result-details {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* 日志（可隐藏） */
+        .log-toggle {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .log-toggle a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        #log {
+            display: none;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🤖 智能瞳距测量工具</h1>
+        <!-- 欢迎页 -->
+        <div id="welcomeScreen">
+            <div class="logo">👓</div>
+            <h1>AI 智能瞳距测量</h1>
+            <p class="subtitle">3秒测出你的瞳距，选镜更精准</p>
 
-        <div class="instructions">
-            <h3>📋 使用说明</h3>
-            <ol>
-                <li><strong>打开摄像头</strong>：点击下方按钮，允许浏览器访问摄像头</li>
-                <li><strong>调整位置</strong>：保持脸部正对摄像头，距离 30-50cm</li>
-                <li><strong>可选：银行卡校准</strong>：将标准银行卡（85.6mm宽）放在脸侧同一平面，可提高精度</li>
-                <li><strong>开始测量</strong>：点击"测量瞳距"按钮，系统将自动采集 5 帧数据</li>
-                <li><strong>查看结果</strong>：系统会显示平均瞳距值和置信度</li>
-            </ol>
-        </div>
-
-        <div class="video-container">
-            <video id="video" autoplay playsinline muted></video>
-            <canvas id="canvas"></canvas>
-        </div>
-
-        <div class="controls">
-            <button id="startBtn" onclick="startCamera()">打开摄像头</button>
-            <button id="detectBtn" class="primary" onclick="measurePD()" disabled>测量瞳距</button>
-            <button onclick="clearLog()">清空日志</button>
-        </div>
-
-        <div id="progressDiv" class="progress">
-            <p id="progressText">正在采集数据...</p>
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+            <div class="features">
+                <div class="feature">
+                    <span class="feature-icon">🎯</span>
+                    <span>AI 人脸识别，精准定位双眼</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">⚡</span>
+                    <span>5帧采样，结果更稳定可靠</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">🔒</span>
+                    <span>本地处理，照片不上传服务器</span>
+                </div>
+                <div class="feature">
+                    <span class="feature-icon">📱</span>
+                    <span>手机电脑都能用，随时随地测</span>
+                </div>
             </div>
+
+            <button class="btn-start" onclick="startMeasure()">开始测量</button>
         </div>
 
-        <div id="resultDiv" style="display: none;" class="result">
-            <h2>✅ 测量结果</h2>
-            <div class="pd-value" id="pdValue">-</div>
-            <p id="pdMessage">-</p>
-            <p class="confidence" id="pdConfidence">-</p>
-            <p class="samples" id="pdSamples">-</p>
-        </div>
+        <!-- 测量页 -->
+        <div id="measureScreen">
+            <h2 class="step-title">
+                <span class="step-number" id="stepNumber">1</span>
+                <span id="stepText">打开摄像头</span>
+            </h2>
 
-        <div id="log"></div>
+            <div class="tips-box">
+                <h3>💡 测量小贴士</h3>
+                <ul>
+                    <li>保持脸部正对摄像头</li>
+                    <li>距离屏幕 30-50 厘米</li>
+                    <li>确保光线充足</li>
+                    <li>摘掉眼镜，露出双眼</li>
+                </ul>
+            </div>
+
+            <div class="video-box">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas"></canvas>
+            </div>
+
+            <div class="btn-group">
+                <button id="startBtn" onclick="startCamera()">打开摄像头</button>
+                <button id="measureBtn" class="primary" onclick="measurePD()" disabled>开始测量</button>
+            </div>
+
+            <div class="progress-box" id="progressBox">
+                <p id="progressText">正在采集数据...</p>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="result-box" id="resultBox">
+                <div class="result-icon" id="resultIcon">✅</div>
+                <h2 id="resultTitle">测量成功</h2>
+                <div class="pd-value" id="pdValue">-</div>
+                <p class="result-message" id="resultMessage">-</p>
+                <div class="result-details" id="resultDetails">-</div>
+                <button class="primary" onclick="measureAgain()" style="margin-top: 20px;">重新测量</button>
+            </div>
+
+            <div class="log-toggle">
+                <a href="#" onclick="toggleLog(); return false;">显示技术日志</a>
+            </div>
+            <div id="log"></div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
@@ -201,28 +348,27 @@
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const startBtn = document.getElementById('startBtn');
-        const detectBtn = document.getElementById('detectBtn');
+        const measureBtn = document.getElementById('measureBtn');
         const logDiv = document.getElementById('log');
-        const resultDiv = document.getElementById('resultDiv');
-        const pdValue = document.getElementById('pdValue');
-        const pdMessage = document.getElementById('pdMessage');
-        const pdConfidence = document.getElementById('pdConfidence');
-        const pdSamples = document.getElementById('pdSamples');
-        const progressDiv = document.getElementById('progressDiv');
+        const progressBox = document.getElementById('progressBox');
         const progressText = document.getElementById('progressText');
         const progressFill = document.getElementById('progressFill');
+        const resultBox = document.getElementById('resultBox');
+        const pdValue = document.getElementById('pdValue');
+        const resultMessage = document.getElementById('resultMessage');
+        const resultDetails = document.getElementById('resultDetails');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
 
         let stream = null;
         let model = null;
 
-        // 配置参数
-        const SAMPLE_COUNT = 5;           // 采样帧数
-        const SAMPLE_DELAY_MS = 200;      // 采样间隔（毫秒）
-        const DEFAULT_RATIO = 0.675;      // 默认比例（mm/px）- 基于实际瞳距校准
-        const CARD_WIDTH_MM = 85.6;       // 标准银行卡宽度
-        const PD_MIN = 54;                // 正常瞳距最小值
-        const PD_MAX = 74;                // 正常瞳距最大值
-        const STABILITY_THRESHOLD = 3;    // 稳定性阈值（mm）
+        const SAMPLE_COUNT = 5;
+        const SAMPLE_DELAY_MS = 200;
+        const DEFAULT_RATIO = 0.675;
+        const PD_MIN = 54;
+        const PD_MAX = 74;
+        const STABILITY_THRESHOLD = 3;
 
         function log(message) {
             const timestamp = new Date().toLocaleTimeString();
@@ -231,8 +377,18 @@
             console.log(message);
         }
 
-        function clearLog() {
-            logDiv.textContent = '';
+        function toggleLog() {
+            logDiv.style.display = logDiv.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function startMeasure() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('measureScreen').style.display = 'block';
+        }
+
+        function updateStep(number, text) {
+            document.getElementById('stepNumber').textContent = number;
+            document.getElementById('stepText').textContent = text;
         }
 
         function updateProgress(current, total) {
@@ -245,6 +401,7 @@
             try {
                 log('🎬 开始打开摄像头...');
                 startBtn.disabled = true;
+                updateStep(1, '正在打开摄像头...');
 
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: 'user', width: 640, height: 480 },
@@ -259,117 +416,69 @@
                 });
 
                 log('📹 视频元数据已加载');
-                log(`📐 视频尺寸: ${video.videoWidth}x${video.videoHeight}`);
-
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
-                log(`🖼️ Canvas 尺寸: ${canvas.width}x${canvas.height}`);
 
-                log('🤖 加载 BlazeFace 模型...');
+                log('🤖 加载 AI 模型...');
+                updateStep(1, '正在加载 AI 模型...');
                 await tf.ready();
                 model = await blazeface.load();
-                log('✅ BlazeFace 模型加载完成');
+                log('✅ AI 模型加载完成');
 
-                detectBtn.disabled = false;
-                log('🎉 准备就绪！点击"测量瞳距"按钮开始');
+                measureBtn.disabled = false;
+                updateStep(2, '准备就绪，点击开始测量');
+                log('🎉 准备就绪！');
 
             } catch (error) {
                 log(`❌ 错误: ${error.message}`);
-                console.error(error);
+                alert('无法打开摄像头，请确保已允许摄像头权限');
                 startBtn.disabled = false;
             }
         }
 
-        // 检测银行卡（简化版，基于颜色和矩形检测）
-        function detectCard(imageData) {
-            // 这里简化处理，实际应该用 OpenCV 做边缘检测
-            // 暂时返回 null，使用默认比例
-            return null;
-        }
-
-        // 单次测量
         async function measureOnce() {
-            // 清空 canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // 绘制当前帧
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-            // 检测人脸
             const predictions = await model.estimateFaces(canvas, false);
-
-            if (predictions.length === 0) {
-                return null;
-            }
+            if (predictions.length === 0) return null;
 
             const face = predictions[0];
             const landmarks = face.landmarks;
+            if (!landmarks || landmarks.length < 2) return null;
 
-            if (!landmarks || landmarks.length < 2) {
-                return null;
-            }
-
-            // 计算双眼像素距离
             const rightEye = landmarks[0];
             const leftEye = landmarks[1];
             const pdPx = Math.hypot(leftEye[0] - rightEye[0], leftEye[1] - rightEye[1]);
-
-            // 尝试检测银行卡
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const card = detectCard(imageData);
-
-            let ratio = DEFAULT_RATIO;
-            let cardDetected = false;
-
-            if (card && card.widthPx > 0) {
-                ratio = CARD_WIDTH_MM / card.widthPx;
-                cardDetected = true;
-            }
-
-            const pdMm = pdPx * ratio;
+            const pdMm = pdPx * DEFAULT_RATIO;
             const confidence = face.probability ? face.probability[0] : 0;
 
-            return {
-                pdMm,
-                pdPx,
-                confidence,
-                cardDetected,
-                ratio,
-                landmarks
-            };
+            return { pdMm, confidence, landmarks };
         }
 
-        // 完整测量流程
         async function measurePD() {
             try {
                 log('');
                 log('=== 开始测量瞳距 ===');
-                detectBtn.disabled = true;
-                resultDiv.style.display = 'none';
-                progressDiv.style.display = 'block';
+                measureBtn.disabled = true;
+                resultBox.style.display = 'none';
+                progressBox.style.display = 'block';
+                updateStep(3, '正在测量中...');
 
                 const samples = [];
-                let cardDetectedCount = 0;
                 let totalConfidence = 0;
 
-                // 采集多帧数据
                 for (let i = 0; i < SAMPLE_COUNT; i++) {
                     updateProgress(i + 1, SAMPLE_COUNT);
-
                     const result = await measureOnce();
 
                     if (result) {
                         samples.push(result.pdMm);
                         totalConfidence += result.confidence;
-                        if (result.cardDetected) cardDetectedCount++;
+                        log(`✅ 第 ${i + 1} 帧: PD=${result.pdMm.toFixed(2)}mm`);
 
-                        log(`✅ 第 ${i + 1} 帧: PD=${result.pdMm.toFixed(2)}mm, 置信度=${(result.confidence * 100).toFixed(1)}%`);
-
-                        // 绘制检测结果
-                        ctx.strokeStyle = '#00ff00';
-                        ctx.lineWidth = 2;
-                        ctx.fillStyle = '#ff0000';
-
+                        // 绘制眼睛标记
+                        ctx.fillStyle = '#2ecc71';
                         result.landmarks.forEach(point => {
                             ctx.beginPath();
                             ctx.arc(point[0], point[1], 5, 0, 2 * Math.PI);
@@ -384,70 +493,74 @@
                     }
                 }
 
-                progressDiv.style.display = 'none';
+                progressBox.style.display = 'none';
 
-                // 分析结果
                 if (samples.length === 0) {
-                    log('❌ 未能采集到有效数据');
-                    log('请确保：');
-                    log('  1. 脸部正对摄像头');
-                    log('  2. 光线充足');
-                    log('  3. 距离适中（30-50cm）');
-                    detectBtn.disabled = false;
+                    alert('未能检测到人脸，请确保：\n1. 脸部正对摄像头\n2. 光线充足\n3. 距离适中');
+                    measureBtn.disabled = false;
+                    updateStep(2, '准备就绪，点击开始测量');
                     return;
                 }
 
-                // 计算平均值和标准差
+                // 计算结果
                 const avgPD = samples.reduce((a, b) => a + b, 0) / samples.length;
                 const variance = samples.reduce((sum, val) => sum + Math.pow(val - avgPD, 2), 0) / samples.length;
                 const stdDev = Math.sqrt(variance);
                 const avgConfidence = totalConfidence / samples.length;
 
-                log('');
                 log('📊 统计结果:');
-                log(`  样本数: ${samples.length}/${SAMPLE_COUNT}`);
                 log(`  平均瞳距: ${avgPD.toFixed(2)} mm`);
                 log(`  标准差: ${stdDev.toFixed(2)} mm`);
-                log(`  平均置信度: ${(avgConfidence * 100).toFixed(1)}%`);
-                log(`  银行卡检测: ${cardDetectedCount}/${samples.length} 帧`);
+                log(`  置信度: ${(avgConfidence * 100).toFixed(1)}%`);
 
-                // 判断稳定性
+                // 显示结果
                 const isStable = stdDev < STABILITY_THRESHOLD;
                 const isValid = avgPD >= PD_MIN && avgPD <= PD_MAX;
                 const isHighConfidence = avgConfidence > 0.8 && samples.length >= 3;
 
-                // 显示结果
-                resultDiv.style.display = 'block';
+                resultBox.style.display = 'block';
                 pdValue.textContent = `${avgPD.toFixed(1)} mm`;
 
                 if (isValid && isStable && isHighConfidence) {
-                    resultDiv.className = 'result';
-                    pdMessage.textContent = `✅ 瞳距正常，建议选择鼻梁宽 16-18mm 的镜框`;
-                } else if (!isStable) {
-                    resultDiv.className = 'result warning';
-                    pdMessage.textContent = `⚠️ 测量不稳定（标准差 ${stdDev.toFixed(1)}mm），建议重新测量`;
-                } else if (!isValid) {
-                    resultDiv.className = 'result warning';
-                    pdMessage.textContent = `⚠️ 瞳距值异常，请确保正对摄像头并重新测量`;
+                    resultBox.className = 'result-box success';
+                    resultIcon.textContent = '✅';
+                    resultTitle.textContent = '测量成功';
+                    resultMessage.innerHTML = `你的瞳距是 <strong>${avgPD.toFixed(1)} mm</strong><br>建议选择鼻梁宽 16-18mm 的镜框`;
                 } else {
-                    resultDiv.className = 'result warning';
-                    pdMessage.textContent = `⚠️ 置信度较低，建议重新测量`;
+                    resultBox.className = 'result-box warning';
+                    resultIcon.textContent = '⚠️';
+                    resultTitle.textContent = '建议重新测量';
+                    if (!isStable) {
+                        resultMessage.textContent = '测量不够稳定，请保持头部静止后重试';
+                    } else if (!isValid) {
+                        resultMessage.textContent = '测量值异常，请确保正对摄像头';
+                    } else {
+                        resultMessage.textContent = '置信度较低，建议重新测量';
+                    }
                 }
 
-                pdConfidence.textContent = `置信度: ${(avgConfidence * 100).toFixed(1)}% | 稳定性: ${isStable ? '良好' : '较差'}`;
-                pdSamples.textContent = `样本: ${samples.map(s => s.toFixed(1)).join(', ')} mm`;
+                resultDetails.innerHTML = `
+                    置信度: ${(avgConfidence * 100).toFixed(1)}% |
+                    稳定性: ${isStable ? '良好' : '较差'}<br>
+                    样本: ${samples.map(s => s.toFixed(1)).join(', ')} mm
+                `;
 
-                log('');
+                updateStep(4, '测量完成');
                 log('🎉 测量完成！');
-
-                detectBtn.disabled = false;
 
             } catch (error) {
                 log(`❌ 测量错误: ${error.message}`);
-                console.error(error);
-                progressDiv.style.display = 'none';
-                detectBtn.disabled = false;
+                alert('测量出错，请重试');
+                progressBox.style.display = 'none';
+                measureBtn.disabled = false;
             }
+        }
+
+        function measureAgain() {
+            resultBox.style.display = 'none';
+            measureBtn.disabled = false;
+            updateStep(2, '准备就绪，点击开始测量');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
     </script>
 </body>
